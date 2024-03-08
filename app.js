@@ -9,6 +9,14 @@ var authRouter = require("./routes/auth");
 var userRouter = require("./routes/user");
 var photoRouter = require("./routes/photo");
 
+var {db} = require("./APIs/knex")
+
+db.select('joined', 'email', 'entries')
+  .from('users').then(randomData => console.log("randomData: ", randomData));
+
+  
+
+
 var app = express();
 
 // view engine setup
