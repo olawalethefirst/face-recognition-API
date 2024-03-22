@@ -1,4 +1,4 @@
-const isValidStringCharacters = (stringArr) => {
+const isValidStringCharacters = (...stringArr) => {
     const isArr = Array.isArray(stringArr)
     
     if (!isArr) {
