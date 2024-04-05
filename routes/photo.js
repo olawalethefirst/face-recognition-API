@@ -1,18 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const db = require('../APIs/database')
+const { sendErrorResponse, sendSuccessResponse } = require('../utils/response')
+const { validatePhotoRoute } = require('../middlewares/validators/photo')
+const { errorMessages } = require("../constants")
 
 /* POSTS photo to detect the faces in it. */
-router.post("/", function (req, res, next) {
+router.post("/", validatePhotoRoute, async function (req, res, next) {
   const { id } = req.body
 
-  db("users").where("id", "=", id).increment("entries", 1).returning("entries").then(entries => res.send(entries[0].entries)).catch(()=> res.status(400).json("Detecting faces failed"))
+  try {
+      const entriesArr = await db("users").where("id", "=", id).increment("entries", 1).returning("entries")
+      
+      return sendSuccessResponse(res, "Face(s) detected successfuly", entriesArr[0].entries)
+    } catch (error) {
+      return sendErrorResponse(res, 500, errorMessages.internalServerError)
+  }
 
-  // const response = {
-  //   ranking: 1,
-  // };
-
-  // res.json(response);
 });
 
 module.exports = router;
