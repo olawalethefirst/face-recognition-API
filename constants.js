@@ -1,10 +1,8 @@
 const errorMessages = {
-    valiadationError: "Validation Error",
-    internalServerError: "An unknown error occurred occured"
-}
-
+  valiadationError: "Validation Error",
+  internalServerError: "An unknown error occurred occured",
+};
 
 module.exports = {
-    errorMessages,
-    internalServerError
-}
+  errorMessages,
+};
