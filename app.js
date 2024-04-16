@@ -9,11 +9,6 @@ const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
 const photoRouter = require("./routes/photo");
 
-const db = require("./APIs/database")
-
-db.select('*')
-  .from('users').then(randomData => console.log("randomData: ", randomData));  
-
 const app = express();
 
 // view engine setup
@@ -27,10 +22,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // routes
-app.use("/", indexRouter);
+// app.use("/", indexRouter);
 app.use("/auth", authRouter);
-app.use("/user", userRouter);
-app.use("/photo", photoRouter);
+// app.use("/user", userRouter);
+// app.use("/photo", photoRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

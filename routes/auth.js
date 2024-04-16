@@ -8,47 +8,53 @@ const {
   validateSignInRoute,
 } = require("../middlewares/validators/auth");
 const { errorMessages } = require("../constants");
+const AuthController = require("../controllers/AuthController");
 
 /* POST user credentials to registers a new user. */
-router.post("/register", validateRegisterRoute, function (req, res, next) {
-  const { email, name, password } = req.body;
+router.post(
+  "/register",
+  validateRegisterRoute,
+  // function (req, res, next) {
+  //   const { email, name, password } = req.body;
 
-  const hash = hashText(password);
-  db.transaction(async (trx) => {
-    const emails = await trx("login").insert(
-      {
-        email,
-        hash,
-      },
-      "email"
-    );
-    const loginEmail = emails[0];
-    const users = await trx("users").insert(
-      {
-        email: loginEmail.email,
-        name,
-        joined: new Date(),
-      },
-      "*"
-    );
+  //   const hash = hashText(password);
+  //   db.transaction(async (trx) => {
+  //     const emails = await trx("login").insert(
+  //       {
+  //         email,
+  //         hash,
+  //       },
+  //       "email"
+  //     );
+  //     const loginEmail = emails[0];
+  //     const users = await trx("users").insert(
+  //       {
+  //         email: loginEmail.email,
+  //         name,
+  //         joined: new Date(),
+  //       },
+  //       "*"
+  //     );
 
-    return sendSuccessResponse(res, "Registered user successfully", users[0]);
-  }).catch((error) => {
-    // Todo: "create custom validation to check if email exists before"
-    let errorMessage;
-    let statusCode;
+  //     return sendSuccessResponse(res, "Registered user successfully", users[0]);
+  //   }).catch((error) => {
+  //     // Todo: "create custom validation to check if email exists before"
+  //     let errorMessage;
+  //     let statusCode;
 
-    if (error.detail === "Key (email)=(email1) already exists.") {
-      errorMessage = "Email address is already in use";
-      statusCode = 400;
-    } else {
-      statusCode = 500;
-      errorMessage = errorMessages.internalServerError;
-    }
+  //     if (error.detail === "Key (email)=(email1) already exists.") {
+  //       errorMessage = "Email address is already in use";
+  //       statusCode = 400;
+  //     } else {
+  //       statusCode = 500;
+  //       errorMessage = errorMessages.internalServerError;
+  //     }
 
-    return sendErrorResponse(res, statusCode, errorMessage);
-  });
-});
+  //     return sendErrorResponse(res, statusCode, errorMessage);
+  //   });
+  // }
+  AuthController.registerUser
+);
 
 /* POST user credential to authenticate existing user. */
 router.post("/signin", validateSignInRoute, async function (req, res, next) {
