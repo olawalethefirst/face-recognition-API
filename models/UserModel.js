@@ -1,4 +1,4 @@
-const { insertInTable, findInTable } = require("../APIs/database");
+const { insertInTable, findInTable, dbInstance } = require("../APIs/database");
 
 class UserModel {
   constructor(email, name) {
@@ -13,10 +13,22 @@ class UserModel {
     return usersArr[0];
   }
 
-  static async fetchUser(id, transactionRef) {
+  static async findUserById(id, transactionRef) {
     const usersArr = await findInTable("users", { id }, ["*"], transactionRef);
 
     return usersArr[0];
+  }
+  
+  static async findUserByEmail(email, transactionRef) {
+    const usersArr = await findInTable("users", { email }, ["*"], transactionRef);
+
+    return usersArr[0];
+  }
+  
+  static async incrementUserEntries(id) {
+    const usersArr = await dbInstance("users").where("id", "=", id).increment("entries", 1).returning("entries")
+
+    return usersArr[0]?.entries;
   }
 }
 

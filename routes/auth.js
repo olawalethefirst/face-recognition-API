@@ -14,69 +14,10 @@ const AuthController = require("../controllers/AuthController");
 router.post(
   "/register",
   validateRegisterRoute,
-  // function (req, res, next) {
-  //   const { email, name, password } = req.body;
-
-  //   const hash = hashText(password);
-  //   db.transaction(async (trx) => {
-  //     const emails = await trx("login").insert(
-  //       {
-  //         email,
-  //         hash,
-  //       },
-  //       "email"
-  //     );
-  //     const loginEmail = emails[0];
-  //     const users = await trx("users").insert(
-  //       {
-  //         email: loginEmail.email,
-  //         name,
-  //         joined: new Date(),
-  //       },
-  //       "*"
-  //     );
-
-  //     return sendSuccessResponse(res, "Registered user successfully", users[0]);
-  //   }).catch((error) => {
-  //     // Todo: "create custom validation to check if email exists before"
-  //     let errorMessage;
-  //     let statusCode;
-
-  //     if (error.detail === "Key (email)=(email1) already exists.") {
-  //       errorMessage = "Email address is already in use";
-  //       statusCode = 400;
-  //     } else {
-  //       statusCode = 500;
-  //       errorMessage = errorMessages.internalServerError;
-  //     }
-
-  //     return sendErrorResponse(res, statusCode, errorMessage);
-  //   });
-  // }
   AuthController.registerUser
 );
 
 /* POST user credential to authenticate existing user. */
-router.post("/signin", validateSignInRoute, async function (req, res, next) {
-  const { email, password } = req.body;
-
-  try {
-    const loginHashArr = await db("login")
-      .select("hash")
-      .where("email", "=", email);
-
-    if (loginHashArr.length > 0) {
-      const loginHash = loginHashArr[0]?.hash;
-
-      if (compareHash(password, loginHash)) {
-        return sendSuccessResponse(res, "Signed in successfully");
-      }
-    }
-
-    return sendErrorResponse(res, 401, "Invalid credentials provided");
-  } catch (error) {
-    return sendErrorResponse(res, 500, errorMessages.internalServerError);
-  }
-});
+router.post("/signin", validateSignInRoute, AuthController.signInUser);
 
 module.exports = router;

@@ -12,7 +12,7 @@ const db = knex({
 });
 
 class database {
-  static insertInTable(
+  static async  insertInTable(
     tableName,
     record,
     returning = ["*"],
@@ -21,7 +21,7 @@ class database {
     return (transactionRef || db)(tableName).insert(record, returning);
   }
 
-  static selectTableRecords(
+  static async selectTableRecords(
     tableName,
     returning = ["*"],
     transactionRef = null
@@ -29,7 +29,7 @@ class database {
     return (transactionRef || db)(tableName).select(returning);
   }
 
-  static findInTable(
+  static async findInTable(
     tableName,
     conditions,
     returning = ["*"],
@@ -40,13 +40,11 @@ class database {
       .select(returning);
   }
 
-  static async createTransaction(callback = async () => {}) {
-    return db.transaction(async (trx) => {
-      await callback(trx);
-    });
+  static async createTransaction() {
+    return  db.transaction();
   }
 }
 
-database.connection = db;
+database.dbInstance = db;
 
 module.exports = database;

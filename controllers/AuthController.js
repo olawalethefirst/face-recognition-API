@@ -1,9 +1,8 @@
 const UserModel = require("../models/UserModel");
 const AuthModel = require("../models/AuthModel");
-const { registerPassword } = AuthModel;
+const { registerPassword, validatePassword } = AuthModel;
 const { createUser } = UserModel;
 const { createTransaction } = require("../APIs/database");
-const { hashText, compareHash } = require("../APIs/hash");
 const { sendErrorResponse, sendSuccessResponse } = require("../utils/response");
 const { errorMessages } = require("../constants");
 
@@ -13,73 +12,47 @@ class AuthController {
     const user = new UserModel(email, name);
     const loginData = new AuthModel(email, password);
 
-    console.log("loginData: ", loginData);
+    const transactionRef = await createTransaction();
 
     try {
-      await createTransaction(async (transactionRef) => {
-        await registerPassword(loginData, transactionRef);
 
-        const newUser = await createUser(user, transactionRef);
+      await registerPassword(loginData, transactionRef);
+      
+      const newUser = await createUser(user, transactionRef);
+      
+      transactionRef.commit()
 
-        return sendSuccessResponse(
-          res,
-          "Registered user successfully",
-          newUser
-        );
-      });
+      return sendSuccessResponse(
+        res,
+        "Registered user successfully",
+        newUser
+      );
+
     } catch (err) {
-      console.log("error: ", err);
+      transactionRef.rollback()
+     
       return sendErrorResponse(res, 500, errorMessages.internalServerError);
     }
   }
 
-  static async signInUser() {}
+  static async signInUser(req, res) {
+    const { email, password } = req.body;
+
+    try {
+      const validationResult = await validatePassword(email, password)
+  
+      if (validationResult.successful) {
+        return sendSuccessResponse(res, "Signed in successfully")
+      } else {
+        return sendErrorResponse(res, 401, "Invalid credentials provided");
+      }
+    } catch {
+      return sendErrorResponse(res, 500, errorMessages.internalServerError)
+    }
+  }
 }
 
 module.exports = AuthController;
-
-// const {
-//   validateRegisterRoute,
-//   validateSignInRoute,
-// } = require("../middlewares/validators/auth");
-
-// /* POST user credentials to registers a new user. */
-// router.post("/register", validateRegisterRoute, function (req, res, next) {
-
-//   db.transaction(async (trx) => {
-//     const emails = await trx("login").insert(
-//       {
-//         email,
-//         hash,
-//       },
-//       "email"
-//     );
-//     const loginEmail = emails[0];
-//     const users = await trx("users").insert(
-//       {
-//         email: loginEmail.email,
-//         name,
-//         joined: new Date(),
-//       },
-//       "*"
-//     );
-
-//
-//   }).catch((error) => {
-//     // Todo: "create custom validation to check if email exists before"
-//     let errorMessage;
-//     let statusCode;
-
-//     if (error.detail === "Key (email)=(email1) already exists.") {
-//       errorMessage = "Email address is already in use";
-//       statusCode = 400;
-//     } else {
-//       statusCode = 500;
-//       errorMessage = ;
-//     }
-
-//   });
-// });
 
 // /* POST user credential to authenticate existing user. */
 // router.post("/signin", validateSignInRoute, async function (req, res, next) {
@@ -94,13 +67,13 @@ module.exports = AuthController;
 //       const loginHash = loginHashArr[0]?.hash;
 
 //       if (compareHash(password, loginHash)) {
-//         return sendSuccessResponse(res, "Signed in successfully");
+//         return sendSuccessResponse;
 //       }
 //     }
 
-//     return sendErrorResponse(res, 401, "Invalid credentials provided");
+//     
 //   } catch (error) {
-//     return sendErrorResponse(res, 500, errorMessages.internalServerError);
+//     ;
 //   }
 // });
 

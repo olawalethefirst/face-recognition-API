@@ -18,7 +18,21 @@ class AuthModel {
     return emailArr[0];
   }
 
-  static async loginUser() {}
+  static async validatePassword(email, password) {
+    let result = { successful: false}
+
+    const loginHashArr = await findInTable("login", { email }, ["email", "hash"])
+    
+    if (loginHashArr.length > 0) {
+      const loginHash = loginHashArr[0]?.hash;
+
+      if (compareHash(password, loginHash)) {
+        result.successful = true
+      }
+    }
+
+    return result
+  }
 }
 
 module.exports = AuthModel;

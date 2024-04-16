@@ -1,13 +1,14 @@
 const { body, validationResult } = require("express-validator");
 const { sendErrorResponse } = require("../../utils/response");
 const { errorMessages } = require("../../constants");
+const { findUserByEmail } = require("../../models/UserModel")
 
 const validateRegisterRoute = [
   body("email")
     .notEmpty()
-    .withMessage("Email string is required")
+    .withMessage("E-mail string is required")
     .isEmail()
-    .withMessage("Invalid email specified"),
+    .withMessage("Invalid E-mail specified"),
   body("name")
     .notEmpty()
     .withMessage("Name string is required")
@@ -21,6 +22,13 @@ const validateRegisterRoute = [
     .withMessage("Password must have a minimum of 8 characters")
     .isLength({ max: 100 })
     .withMessage("Password must have a maximum of 100 characters"),
+    body('email').custom(async value => {
+      const user = await findUserByEmail(value);
+      
+      if (user) {
+        throw new Error('E-mail already in use');
+      }
+    }),
   (req, res, next) => {
     const errors = validationResult(req);
 
@@ -40,9 +48,9 @@ const validateRegisterRoute = [
 const validateSignInRoute = [
   body("email")
     .notEmpty()
-    .withMessage("Email string is required")
+    .withMessage("E-mail string is required")
     .isEmail()
-    .withMessage("Invalid email specified"),
+    .withMessage("Invalid E-mail specified"),
   body("password").notEmpty().withMessage("Password string is required"),
   (req, res, next) => {
     const errors = validationResult(req);
