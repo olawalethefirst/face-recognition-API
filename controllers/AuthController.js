@@ -15,22 +15,16 @@ class AuthController {
     const transactionRef = await createTransaction();
 
     try {
-
       await registerPassword(loginData, transactionRef);
-      
+
       const newUser = await createUser(user, transactionRef);
-      
-      transactionRef.commit()
 
-      return sendSuccessResponse(
-        res,
-        "Registered user successfully",
-        newUser
-      );
+      transactionRef.commit();
 
+      return sendSuccessResponse(res, "Registered user successfully", newUser);
     } catch (err) {
-      transactionRef.rollback()
-     
+      transactionRef.rollback();
+
       return sendErrorResponse(res, 500, errorMessages.internalServerError);
     }
   }
@@ -39,42 +33,17 @@ class AuthController {
     const { email, password } = req.body;
 
     try {
-      const validationResult = await validatePassword(email, password)
-  
+      const validationResult = await validatePassword(email, password);
+
       if (validationResult.successful) {
-        return sendSuccessResponse(res, "Signed in successfully")
+        return sendSuccessResponse(res, "Signed in successfully");
       } else {
         return sendErrorResponse(res, 401, "Invalid credentials provided");
       }
     } catch {
-      return sendErrorResponse(res, 500, errorMessages.internalServerError)
+      return sendErrorResponse(res, 500, errorMessages.internalServerError);
     }
   }
 }
 
 module.exports = AuthController;
-
-// /* POST user credential to authenticate existing user. */
-// router.post("/signin", validateSignInRoute, async function (req, res, next) {
-//   const { email, password } = req.body;
-
-//   try {
-//     const loginHashArr = await db("login")
-//       .select("hash")
-//       .where("email", "=", email);
-
-//     if (loginHashArr.length > 0) {
-//       const loginHash = loginHashArr[0]?.hash;
-
-//       if (compareHash(password, loginHash)) {
-//         return sendSuccessResponse;
-//       }
-//     }
-
-//     
-//   } catch (error) {
-//     ;
-//   }
-// });
-
-// module.exports = router;
