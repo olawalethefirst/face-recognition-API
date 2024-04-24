@@ -1,8 +1,11 @@
 import { clarifai } from "../constants";
 
-const detectFaces =
-  (async (imageURL) => {
-    try {
+const detectFaces = async (imageURL) => {
+      const fnResponse = {
+        successful: false,
+        data: null,
+      };
+
       const body = JSON.stringify({
         user_app_id: {
           user_id: clarifai.userId,
@@ -13,7 +16,6 @@ const detectFaces =
             data: {
               image: {
                 url: imageURL,
-                // "base64": IMAGE_BYTES_STRING
               },
             },
           },
@@ -40,30 +42,28 @@ const detectFaces =
         const { status, outputs } = serializedResponse;
 
         if (status.description?.toLowerCase() === "ok") {
+          fnResponse.successful = true
+          
           const prioritizedOutput = outputs[0];
-
           const regions = prioritizedOutput?.data?.regions || [];
 
-          const facesBoundary = regions.map(
+          fnResponse.data = regions.map(
             ({
-              region_info: {
+              region_info: { // eslint-disable-next-line camelcase
                 bounding_box: { top_row, bottom_row, left_col, right_col },
               },
-            }) => ({
-              top: top_row,
-              bottom: 1 - bottom_row,
-              left: left_col,
-              right: 1 - right_col,
+            }) => ({ // eslint-disable-next-line camelcase
+              top: top_row, // eslint-disable-next-line camelcase
+              bottom: 1 - bottom_row, // eslint-disable-next-line camelcase
+              left: left_col, // eslint-disable-next-line camelcase
+              right: 1 - right_col,// eslint-disable-next-line camelcase
             })
-          );
+          );          
+        } 
+      }
+  
+  }
 
-          const preloadedImageUrl = await preloadImageAsync(_imageURL);
-        } else {
-          console.warn("something wrong may have happened: ", status);
-        }
-      } else throw new Error(await response.json());
-    } catch (error) {
-      console.error("An error occured: ", error);
-    }
-  },
-  []);
+  module.exports = {
+    detectFaces
+  }
