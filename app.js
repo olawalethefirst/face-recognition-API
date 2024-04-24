@@ -9,6 +9,9 @@ const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
 const detectionRouter = require("./routes/detection");
 
+const { sendErrorResponse } = require("./utils/response")
+const { errorMessages } = require("./constants")
+
 const app = express();
 
 // view engine setup
@@ -22,7 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // routes
-// app.use("/", indexRouter);
+app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/detection", detectionRouter);
@@ -34,13 +37,9 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
+  console.error("An Error Occurred: ", err);
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render("error");
+  sendErrorResponse(res, err.status || 500, err.message || errorMessages.internalServerError, err)
 });
 
 module.exports = app;

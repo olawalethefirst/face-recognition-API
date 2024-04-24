@@ -1,14 +1,21 @@
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+const { jwToken } = require("../constants")
 
 
-const signData = (data) => {
-    const token = jwt.sign(data, 'shhhhh');
+const generateToken = (data) => {
+    return  jwt.sign(data, jwToken.SECRET_KEY, {
+        expiresIn: "7d"
+    });
+
 }
 
 const verifyToken = (token) => {
     const response = { successful: false, data: null, error: null }
+
     try {
-        const decoded = jwt.verify(token, 'shhhhh');
+        const decoded = jwt.verify(token, jwToken.SECRET_KEY);
+
+        response.successful = true;
         response.data = decoded;
     } catch (error) {
         response.error = error;
@@ -18,6 +25,6 @@ const verifyToken = (token) => {
 }
 
 module.exports = {
-    signData,
+    generateToken,
     verifyToken
 }

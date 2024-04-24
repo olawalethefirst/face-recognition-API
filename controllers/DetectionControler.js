@@ -4,7 +4,7 @@ const { sendSuccessResponse, sendErrorResponse } = require("../utils/response")
 
 class DetectionController {
     static async detectFaces (req, res)  {
-        const { id } = req.body
+        const { id } = req.user
         
         try {
             const entriesCount = await incrementUserEntries(id)

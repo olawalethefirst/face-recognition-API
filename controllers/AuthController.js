@@ -1,10 +1,11 @@
 const UserModel = require("../models/UserModel");
 const AuthModel = require("../models/AuthModel");
 const { registerPassword, validatePassword } = AuthModel;
-const { createUser } = UserModel;
+const { createUser, findUserByEmail } = UserModel;
 const { createTransaction } = require("../APIs/database");
 const { sendErrorResponse, sendSuccessResponse } = require("../utils/response");
 const { errorMessages } = require("../constants");
+const { generateToken } = require("../APIs/jwt")
 
 class AuthController {
   static async registerUser(req, res) {
@@ -18,10 +19,11 @@ class AuthController {
       await registerPassword(loginData, transactionRef);
 
       const newUser = await createUser(user, transactionRef);
+      const token = generateToken(newUser)
 
-      transactionRef.commit();
-
-      return sendSuccessResponse(res, "Registered user successfully", newUser);
+       transactionRef.commit();
+      
+      return sendSuccessResponse(res, "Registered user successfully", { token });
     } catch (err) {
       transactionRef.rollback();
 
@@ -34,9 +36,11 @@ class AuthController {
 
     try {
       const validationResult = await validatePassword(email, password);
+      const user = await findUserByEmail(email)
+      const token = generateToken(user)
 
       if (validationResult.successful) {
-        return sendSuccessResponse(res, "Signed in successfully");
+        return sendSuccessResponse(res, "Signed in successfully", { token });
       } else {
         return sendErrorResponse(res, 401, "Invalid credentials provided");
       }

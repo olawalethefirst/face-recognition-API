@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { validatePhotoRoute } = require('../middlewares/validators/detection')
 const DetectionController = require("../controllers/DetectionControler");
+const { validateToken } = require("../middlewares/authorizeAccess")
 
 /* POSTS photo to detect the faces in it. */
-router.post("/", validatePhotoRoute, DetectionController.detectFaces);
+router.put("/", validateToken,  DetectionController.detectFaces);
 
 module.exports = router;

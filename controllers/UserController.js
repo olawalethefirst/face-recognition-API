@@ -4,7 +4,7 @@ const { sendSuccessResponse, sendErrorResponse } = require("../utils/response");
 
 class UserController {
     static async getUser (req, res) {
-        const { id } = req.params;
+        const { id } = req.user;
 
         try {
             const user = await findUserById(id);
