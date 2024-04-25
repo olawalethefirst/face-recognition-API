@@ -1,4 +1,4 @@
-import { clarifai } from "../constants";
+const { clarifai } = require("../constants");
 
 const detectFaces = async (imageURL) => {
       const fnResponse = {
@@ -30,11 +30,15 @@ const detectFaces = async (imageURL) => {
         },
         body,
       };
-
+      console.log("requestOptions: ", requestOptions)
+      
+      console.log("url: ", `${clarifai.baseUrl}/${clarifai.modelID}/outputs`)
+      
       const response = await fetch(
         `${clarifai.baseUrl}/${clarifai.modelID}/outputs`,
         requestOptions
       );
+      console.log("response: ", response)
 
       if (response.ok) {
         const serializedResponse = await response.json();
@@ -42,11 +46,10 @@ const detectFaces = async (imageURL) => {
         const { status, outputs } = serializedResponse;
 
         if (status.description?.toLowerCase() === "ok") {
-          fnResponse.successful = true
-          
           const prioritizedOutput = outputs[0];
           const regions = prioritizedOutput?.data?.regions || [];
-
+          
+          fnResponse.successful = true
           fnResponse.data = regions.map(
             ({
               region_info: { // eslint-disable-next-line camelcase
@@ -62,6 +65,7 @@ const detectFaces = async (imageURL) => {
         } 
       }
   
+      return fnResponse
   }
 
   module.exports = {
