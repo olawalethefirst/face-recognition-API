@@ -1,7 +1,7 @@
 const errorMessages = {
   valiadationError: "Validation Error",
   internalServerError: "An unknown error occurred occured",
-  unathorizedUser: "User is unauthorized to make request"
+  unathorizedUser: "User is unauthorized to make request",
 };
 
 const {
@@ -10,7 +10,12 @@ const {
   CLARIFAI_APP_ID,
   CLARIFAI_MODEL_ID,
   CLARIFAI_BASE_URL,
-  JWTOKEN_SECRET_KEY
+  JWTOKEN_SECRET_KEY,
+  DATEABASE_HOST,
+  DATEABASE_NAME,
+  DATEABASE_PORT,
+  DATEABASE_USER,
+  DATEABASE_PASSWORD,
 } = process.env;
 
 module.exports = {
@@ -25,7 +30,12 @@ module.exports = {
   jwToken: {
     SECRET_KEY: JWTOKEN_SECRET_KEY,
   },
-  cookiesKeys: {
-    
-  }
+  cookiesKeys: {},
+  database: {
+    host: DATEABASE_HOST,
+    name: DATEABASE_NAME,
+    port: DATEABASE_PORT,
+    user: DATEABASE_USER,
+    password: DATEABASE_PASSWORD,
+  },
 };

@@ -1,18 +1,20 @@
 const knex = require("knex");
+const { database: databaseCredentials } = require("../constants");
 
 const db = knex({
   client: "pg",
   connection: {
-    host: "127.0.0.1",
-    port: 5432,
-    user: "",
-    password: "",
-    database: "face-recognition",
+    host: databaseCredentials.host,
+    port: databaseCredentials.port,
+    user: databaseCredentials.user,
+    password: databaseCredentials.password,
+    database: databaseCredentials.name,
+    ssl: true,
   },
 });
 
 class database {
-  static async  insertInTable(
+  static async insertInTable(
     tableName,
     record,
     returning = ["*"],
@@ -41,7 +43,7 @@ class database {
   }
 
   static async createTransaction() {
-    return  db.transaction();
+    return db.transaction();
   }
 }
 
