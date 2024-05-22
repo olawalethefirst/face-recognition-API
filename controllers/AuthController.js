@@ -19,9 +19,13 @@ class AuthController {
       await registerPassword(loginData, transactionRef);
 
       const newUser = await createUser(user, transactionRef);
-      const token = generateToken(newUser)
+      
+      delete newUser.name;
+      delete newUser.email;
 
-       transactionRef.commit();
+      const token = generateToken(newUser);
+
+      transactionRef.commit();
       
       return sendSuccessResponse(res, "Registered user successfully", { token });
     } catch (err) {
@@ -37,15 +41,19 @@ class AuthController {
     try {
       const validationResult = await validatePassword(email, password);
       const user = await findUserByEmail(email)
-      const token = generateToken(user)
 
-      if (validationResult.successful) {
-        return sendSuccessResponse(res, "Signed in successfully", { token });
-      } else {
-        return sendErrorResponse(res, 401, "Invalid credentials provided");
-      }
+      if (user) {
+        const token = generateToken(user)
+
+        if (validationResult.successful) {
+          return sendSuccessResponse(res, "Signed in successfully", { token });
+        }
+      } 
+
+      return sendErrorResponse(res, 401, "Invalid credentials provided");
+
     } catch {
-      return sendErrorResponse(res, 500, errorMessages.internalServerError);
+        return sendErrorResponse(res, 500, errorMessages.internalServerError);
     }
   }
 }
