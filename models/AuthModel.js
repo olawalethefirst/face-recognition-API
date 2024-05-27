@@ -19,7 +19,7 @@ class AuthModel {
   }
 
   static async validatePassword(email, password) {
-    let result = { successful: false}
+    const result = { successful: false}
 
     const loginHashArr = await findInTable("login", { email }, ["email", "hash"])
     

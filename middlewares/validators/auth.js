@@ -23,15 +23,16 @@ const validateRegisterRoute = [
     .isLength({ max: 100 })
     .withMessage("Password must have a maximum of 100 characters"),
     body('email').custom(async value => {
-
+      let user;
+      
       try {
-        const user = await findUserByEmail(value);
-        
-        if (user) {
-          throw new Error('E-mail already in use');
-        }
+        user = await findUserByEmail(value);
       } catch (error) {
         throw new Error('Error validating email');
+      }
+
+      if (user) {
+        throw new Error('E-mail already in use');
       }
     }),
   (req, res, next) => {

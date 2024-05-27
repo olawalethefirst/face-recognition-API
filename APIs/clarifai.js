@@ -30,16 +30,12 @@ const detectFaces = async (imageURL) => {
         },
         body,
       };
-      console.log("requestOptions: ", requestOptions)
-      
-      console.log("url: ", `${clarifai.baseUrl}/${clarifai.modelID}/outputs`)
       
       const response = await fetch(
         `${clarifai.baseUrl}/${clarifai.modelID}/outputs`,
         requestOptions
       );
-      console.log("response: ", response)
-
+      
       if (response.ok) {
         const serializedResponse = await response.json();
 
@@ -64,7 +60,7 @@ const detectFaces = async (imageURL) => {
           );          
         } 
       }
-  
+
       return fnResponse
   }
 

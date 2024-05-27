@@ -20,6 +20,7 @@ class AuthController {
 
       const newUser = await createUser(user, transactionRef);
       
+      // remove user identifiable personal data
       delete newUser.name;
       delete newUser.email;
 
@@ -41,6 +42,10 @@ class AuthController {
     try {
       const validationResult = await validatePassword(email, password);
       const user = await findUserByEmail(email)
+
+      // remove user identifiable personal data
+      delete user.name;
+      delete user.email;
 
       if (user) {
         const token = generateToken(user)
