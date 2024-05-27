@@ -28,6 +28,8 @@ const validateRegisterRoute = [
       try {
         user = await findUserByEmail(value);
       } catch (error) {
+        console.error({name: "error finding user by email", error})
+        
         throw new Error('Error validating email');
       }
 

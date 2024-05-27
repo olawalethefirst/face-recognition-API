@@ -18,7 +18,9 @@ class DetectionController {
             const entriesCount = await incrementUserEntries(id)
             
             return sendSuccessResponse(res, "Face(s) detected successfuly", { entries: entriesCount, faces: data })
-        } catch {
+        } catch (error) {
+            console.error({name:"Error detecting faces", error})
+            
             return sendErrorResponse(res, 500, errorMessages.internalServerError)
         }
 

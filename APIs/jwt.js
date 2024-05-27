@@ -18,6 +18,8 @@ const verifyToken = (token) => {
         response.successful = true;
         response.data = decoded;
     } catch (error) {
+        console.error({name:"Error verifying token", error})
+
         response.error = error;
     }
 

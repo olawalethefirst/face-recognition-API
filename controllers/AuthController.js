@@ -29,7 +29,9 @@ class AuthController {
       transactionRef.commit();
       
       return sendSuccessResponse(res, "Registered user successfully", { token });
-    } catch (err) {
+    } catch (error) {
+      console.error({name:"Error registering user", error})
+
       transactionRef.rollback();
 
       return sendErrorResponse(res, 500, errorMessages.internalServerError);
@@ -57,7 +59,9 @@ class AuthController {
 
       return sendErrorResponse(res, 401, "Invalid credentials provided");
 
-    } catch {
+    } catch (error) {
+        console.error({name:"Error signing in user", error})
+        
         return sendErrorResponse(res, 500, errorMessages.internalServerError);
     }
   }

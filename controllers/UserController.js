@@ -14,7 +14,9 @@ class UserController {
             } else {
                 return sendErrorResponse(res, 404, "User not found")
             }
-        } catch {
+        } catch(error) {
+            console.error({name:"Error retrieving user", error})
+            
             return sendErrorResponse(res, 500, errorMessages.internalServerError)
         }
     }
