@@ -13,11 +13,13 @@ const validateDetectionRoute = [
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
+      const errorsArr = errors.array();
+      
       return sendErrorResponse(
         res,
         400,
-        errorMessages.valiadationError,
-        errors.array()
+        errorsArr[0].msg,
+        errorsArr
       );
     }
 
