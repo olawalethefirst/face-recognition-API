@@ -1,6 +1,5 @@
 const { validationResult, body } = require("express-validator");
 const { sendErrorResponse } = require("../../utils/response");
-const { errorMessages } = require("../../constants");
 
 const validateDetectionRoute = [
   body("imageUrl")

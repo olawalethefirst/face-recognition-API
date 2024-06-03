@@ -1,6 +1,5 @@
 const { body, validationResult } = require("express-validator");
 const { sendErrorResponse } = require("../../utils/response");
-const { errorMessages } = require("../../constants");
 const { findUserByEmail } = require("../../models/UserModel")
 
 const validateRegisterRoute = [
