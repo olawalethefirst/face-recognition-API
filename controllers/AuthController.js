@@ -45,11 +45,11 @@ class AuthController {
       const validationResult = await validatePassword(email, password);
       const user = await findUserByEmail(email)
 
-      // remove user identifiable personal data
-      delete user.name;
-      delete user.email;
-
       if (user) {
+        // remove user identifiable personal data
+        delete user.name;
+        delete user.email;
+
         const token = generateToken(user)
 
         if (validationResult.successful) {
